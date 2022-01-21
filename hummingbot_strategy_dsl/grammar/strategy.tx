@@ -1,0 +1,29 @@
+
+
+StrategyModel:
+    (
+      ('name:' name=ID)
+      ('version:' version=STRING)
+      ('description:' description=STRING)?
+      ('exchanges:' '[' exchanges+=Exchange[','] ']')
+    )# // In any order
+
+;
+
+Exchange: BinanceExchange | AscentExExchange;
+
+BinanceExchange:
+     'Binance('  apiKey=STRING ',' apiSecret=STRING ')'
+;
+
+AscentExExchange:
+     'AscentEX('  apiKey=STRING ',' apiSecret=STRING ')'
+;
+
+// Commenting
+Comment:
+  /\/\/.*$/
+;
+
+// === Fully Qualified Names Rule ===
+FQN: ID('.'ID)*;
