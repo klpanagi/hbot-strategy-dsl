@@ -1,0 +1,75 @@
+
+
+StrategyModel:
+    (
+      ('name:' name=ID)
+      ('version:' version=STRING)
+      ('description:' description=STRING)?
+      ('markets:' '[' markets+=Market[','] ']')
+      ('parameters:' '[' parameters+=ParameterDefinition[','] ']')
+    )# // In any order
+
+;
+
+Market:
+	'Market(' exchange=Exchange ',' pair=MarketPair ')'
+;
+
+MarketPair:
+	'Pair(' pair=STRING ')'
+;
+
+Exchange: BinanceExchange | AscentExExchange;
+
+BinanceExchange:
+     'Binance('  apiKey=STRING ',' apiSecret=STRING ')'
+;
+
+AscentExExchange:
+     'AscentEX('  apiKey=STRING ',' apiSecret=STRING ')'
+;
+
+ParameterDefinition:
+    NumericParameterDef | BoolParameterDef | StringParameterDef |
+	ListParameterDef | DictParameterDef
+;
+
+NumericParameterDef:
+    IntParameterDef | FloatParameterDef
+;
+
+IntParameterDef:
+    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'int' ('=' defaultValue=INT)? (description=/#.*#/)?
+;
+
+FloatParameterDef:
+    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'float' ('=' defaultValue=FLOAT)? (description=/#.*#/)?
+;
+
+StringParameterDef:
+    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'string' ('=' defaultValue=STRING)? (description=/#.*#/)?
+;
+
+BoolParameterDef:
+    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'bool' ('=' defaultValue=BOOL)? (description=/#.*#/)?
+;
+
+ListParameterDef:
+    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'list' (description=/#.*#/)?
+;
+
+DictParameterDef:
+    name=ID ':' '{'
+        items*=ParameterDefinition
+        '}'
+;
+
+ParameterBehaviorType: "static" | "dynamic";
+
+// Commenting
+Comment:
+  /\/\/.*$/
+;
+
+// === Fully Qualified Names Rule ===
+FQN: ID('.'ID)*;

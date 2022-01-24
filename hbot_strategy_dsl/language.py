@@ -7,7 +7,7 @@ CURRENT_FPATH = pathlib.Path(__file__).parent.resolve()
 
 def get_metamodel():
     metamodel = metamodel_from_file(
-        CURRENT_FPATH.joinpath('lang/strategy.tx'),
+        CURRENT_FPATH.joinpath('grammar/strategy.tx'),
         classes=[]
     )
     return metamodel

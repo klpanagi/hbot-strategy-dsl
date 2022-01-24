@@ -8,14 +8,14 @@ from setuptools import setup, find_packages
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
 
-VERSIONFILE = os.path.join(this_dir, "hummingbot_strategy_dsl", "__init__.py")
+VERSIONFILE = os.path.join(this_dir, "hbot_strategy_dsl", "__init__.py")
 VERSION = None
 for line in open(VERSIONFILE, "r").readlines():
     if line.startswith('__version__'):
         VERSION = line.split('\"')[1]
 
 if not VERSION:
-    raise RuntimeError('No version defined in hummingbot_strategy_dsl.__init__.py')
+    raise RuntimeError('No version defined in hbot_strategy_dsl.__init__.py')
 
 if sys.argv[-1].startswith('publish'):
     if os.system("pip list | grep wheel"):
@@ -61,11 +61,14 @@ setup(
     description="",
     entry_points={
         # 'textx_generators': [
-        #     'hummingbot_strategy_dsl=hummingbot_strategy_dsl.generator:generate',
+        #     'hbot_strategy_dsl=hbot_strategy_dsl.generator:generate',
         # ],
         # 'textx_languages': [
-        #     'hummingbot_strategy_dsl = hummingbot_strategy_dsl:language',
+        #     'hbot_strategy_dsl = hbot_strategy_dsl:language',
         # ]
+        'console_scripts': [
+            'hbot=hbot_strategy_dsl.cli:main',
+        ],
     },
     install_requires=requirements,
     license="MIT license",
@@ -74,16 +77,17 @@ setup(
     package_data={'': ['*.tx']},
     keywords='hummingbot',
     name='humminbot-strategy-dsl',
+
     packages=find_packages(
         include=[
-            'hummingbot_strategy_dsl',
-            'hummingbot_strategy_dsl.*'
+            'hbot_strategy_dsl',
+            'hbot_strategy_dsl.*'
         ]
     ),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/robotics-4-all/hummingbot_strategy_dsl-dsl',
+    url='https://github.com/robotics-4-all/hummingbot-strategy-dsl',
     version=VERSION,
     zip_safe=False,
 )
