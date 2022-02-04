@@ -28,7 +28,8 @@ jinja_env = jinja2.Environment(
     trim_blocks=True,
     lstrip_blocks=True)
 
-template = jinja_env.get_template('strategy_conf.tpl')
+CONF_TEMPLATE_TPL = jinja_env.get_template('strategy_conf.tpl')
+CONF_MAP_TPL = jinja_env.get_template('strategy_conf_map.tpl')
 
 srcgen_folder = path.join(path.realpath(getcwd()), 'gen')
 
@@ -48,15 +49,32 @@ def camelcase_to_snakecase(_str: str) -> str:
 def set_defaults(strategy):
     # for p in strategy.parameters:
     #     p.description = p.description.split('#')[1].strip()
+    if strategy.author in (None, ""):
+        strategy.author = "Anonymous"
     return strategy
 
+def generate_init_file(strategy, out_dir):
+    out_file = path.join(out_dir, f"__init__.py")
+    with open(path.join(out_file), 'w') as f:
+        f.write(f"# Author: {strategy.author}")
+        f.write(f"# Author Email: {strategy.authorEmail}")
+    chmod(out_file, 509)
+
+def generate_conf_map_file(strategy, out_dir):
+    strategy_name = camelcase_to_snakecase(strategy.name)
+    strategy.name_snake = strategy_name
+    out_file = path.join(out_dir,
+                         f"conf_{strategy_name}_config_map.py")
+    with open(path.join(out_file), 'w') as f:
+        f.write(CONF_MAP_TPL.render(strategy=strategy))
+    chmod(out_file, 509)
 
 def generate_conf_tpl_file(strategy, out_dir):
     strategy_name = camelcase_to_snakecase(strategy.name)
     out_file = path.join(out_dir,
                          f"conf_{strategy_name}_strategy_TEMPLATE.yml")
     with open(path.join(out_file), 'w') as f:
-        f.write(template.render(strategy=strategy))
+        f.write(CONF_TEMPLATE_TPL.render(strategy=strategy))
     chmod(out_file, 509)
 
 def generate_project(model_fpath: str,
@@ -71,6 +89,8 @@ def generate_project(model_fpath: str,
     strategy = set_defaults(model)
 
     generate_conf_tpl_file(strategy, out_dir)
+    generate_conf_map_file(strategy, out_dir)
+    generate_init_file(strategy, out_dir)
 
     return out_dir
 

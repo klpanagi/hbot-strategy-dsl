@@ -10,6 +10,12 @@ parameters: [
         name=max_spread,
         type=float,
         default=1.0,
-        description="Simple strategy example.",
+        description="The maximum spread value",
+    ),
+    Param(
+        name=order_refresh_time,
+        type=int,
+        default=10,
+        description="How far away from the mid price do you want to place bid and ask orders",
     )
 ]

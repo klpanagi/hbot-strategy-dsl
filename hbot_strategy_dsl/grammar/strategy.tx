@@ -1,10 +1,13 @@
-
+// klpanagi
 
 StrategyModel:
     (
       ('name:' name=ID)
       ('version:' version=STRING)
+      ('author:' author=STRING)?
+      ('author_email:' authorEmail=STRING)?
       ('description:' description=STRING)?
+
       ('markets:' '[' markets+=Market[','] ']')
       ('parameters:' '[' parameters+=Parameter[','] ']')
     )# // In any order
@@ -49,7 +52,7 @@ ParameterType:
 ;
 
 ParameterValue:
-    STRING | FLOAT | BOOL | List | Dictionary | "null"
+    STRING | NUMBER | BOOL | List | Dictionary | "null" | 'decimal'
 ;
 
 List:
