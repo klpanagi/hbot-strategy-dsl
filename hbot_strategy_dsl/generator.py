@@ -30,8 +30,10 @@ jinja_env = jinja2.Environment(
 
 CONF_TEMPLATE_TPL = jinja_env.get_template('strategy_conf.tpl')
 CONF_MAP_TPL = jinja_env.get_template('strategy_conf_map.tpl')
+START_TPL = jinja_env.get_template('strategy_start.tpl')
+STRATEGY_TPL = jinja_env.get_template('strategy_impl.tpl')
 
-srcgen_folder = path.join(path.realpath(getcwd()), 'gen')
+SRC_GEN_DIR = path.join(path.realpath(getcwd()), 'gen')
 
 
 def camelcase_to_snakecase(_str: str) -> str:
@@ -54,10 +56,26 @@ def set_defaults(strategy):
     return strategy
 
 def generate_init_file(strategy, out_dir):
-    out_file = path.join(out_dir, f"__init__.py")
+    out_file = path.join(out_dir, "__init__.py")
     with open(path.join(out_file), 'w') as f:
         f.write(f"# Author: {strategy.author}")
         f.write(f"# Author Email: {strategy.authorEmail}")
+    chmod(out_file, 509)
+
+def generate_strategy_file(strategy, out_dir):
+    strategy_name = camelcase_to_snakecase(strategy.name)
+    strategy.name_snake = strategy_name
+    out_file = path.join(out_dir, f"{strategy_name}.py")
+    with open(path.join(out_file), 'w') as f:
+        f.write(STRATEGY_TPL.render(strategy=strategy))
+    chmod(out_file, 509)
+
+def generate_start_file(strategy, out_dir):
+    strategy_name = camelcase_to_snakecase(strategy.name)
+    strategy.name_snake = strategy_name
+    out_file = path.join(out_dir, "start.py")
+    with open(path.join(out_file), 'w') as f:
+        f.write(START_TPL.render(strategy=strategy))
     chmod(out_file, 509)
 
 def generate_conf_map_file(strategy, out_dir):
@@ -81,7 +99,7 @@ def generate_project(model_fpath: str,
              out_dir: str = None):
     # Create output folder
     if out_dir is None:
-        out_dir = srcgen_folder
+        out_dir = SRC_GEN_DIR
     model = build_model(model_fpath)
     if not path.exists(out_dir):
         mkdir(out_dir)
@@ -91,6 +109,8 @@ def generate_project(model_fpath: str,
     generate_conf_tpl_file(strategy, out_dir)
     generate_conf_map_file(strategy, out_dir)
     generate_init_file(strategy, out_dir)
+    generate_start_file(strategy, out_dir)
+    generate_strategy_file(strategy, out_dir)
 
     return out_dir
 
