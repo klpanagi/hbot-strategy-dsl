@@ -6,7 +6,7 @@ StrategyModel:
       ('version:' version=STRING)
       ('description:' description=STRING)?
       ('markets:' '[' markets+=Market[','] ']')
-      ('parameters:' '[' parameters+=ParameterDefinition[','] ']')
+      ('parameters:' '[' parameters+=Parameter[','] ']')
     )# // In any order
 
 ;
@@ -29,39 +29,39 @@ AscentExExchange:
      'AscentEX('  apiKey=STRING ',' apiSecret=STRING ')'
 ;
 
-ParameterDefinition:
-    NumericParameterDef | BoolParameterDef | StringParameterDef |
-	ListParameterDef | DictParameterDef
+Parameter:
+    'Param('
+    (
+        ('name=' name=ID) ','
+        ('type=' type=ParameterType) ','
+        ('description=' description=STRING ',')?
+        ('prompt_msg=' promptMessage=STRING ',')?
+        ('default=' defaultValue=ParameterValue ',')?
+        ('keyword=' keyword=STRING ',')?
+        ('dynamic_reconfigure=' dynamicReconfigure=BOOL ',')?
+        ('prompt_on_new=' promptOnNew=BOOL ',')?
+    )# // In any order
+    ')'
 ;
 
-NumericParameterDef:
-    IntParameterDef | FloatParameterDef
+ParameterType:
+    'int' | 'float' | 'str' | 'bool' | 'list' | 'dict'
 ;
 
-IntParameterDef:
-    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'int' ('=' defaultValue=INT)? (description=/#.*#/)?
+ParameterValue:
+    STRING | FLOAT | BOOL | List | Dictionary | "null"
 ;
 
-FloatParameterDef:
-    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'float' ('=' defaultValue=FLOAT)? (description=/#.*#/)?
+List:
+    "[" values*=ParameterValue[','] "]"
 ;
 
-StringParameterDef:
-    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'string' ('=' defaultValue=STRING)? (description=/#.*#/)?
+Dictionary:
+    "{" members*=DictionaryMember[','] "}"
 ;
 
-BoolParameterDef:
-    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'bool' ('=' defaultValue=BOOL)? (description=/#.*#/)?
-;
-
-ListParameterDef:
-    ('(' type=ParameterBehaviorType ')')? name=ID ':' 'list' (description=/#.*#/)?
-;
-
-DictParameterDef:
-    name=ID ':' '{'
-        items*=ParameterDefinition
-        '}'
+DictionaryMember:
+    key=STRING ':' value=ParameterValue
 ;
 
 ParameterBehaviorType: "static" | "dynamic";

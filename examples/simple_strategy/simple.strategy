@@ -6,7 +6,10 @@ markets: [
     Market(AscentEX('MY_API_KEY', 'MY_API_SECRET'), Pair('ADA-USDT'))
 ]
 parameters: [
-    order_refresh_time : int = 10  # Parameter description #,
-    max_spread : float = 2.0 # Parameter description #,
-    (dynamic) spread : float = 0.5 # Parameter description #
+    Param(
+        name=max_spread,
+        type=float,
+        default=1.0,
+        description="Simple strategy example.",
+    )
 ]

@@ -46,8 +46,8 @@ def camelcase_to_snakecase(_str: str) -> str:
 
 
 def set_defaults(strategy):
-    for p in strategy.parameters:
-        p.description = p.description.split('#')[1].strip()
+    # for p in strategy.parameters:
+    #     p.description = p.description.split('#')[1].strip()
     return strategy
 
 
