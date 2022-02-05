@@ -55,6 +55,7 @@ class {{ strategy.name }}(StrategyPyBase):
         ## HERE GOES THE IMPLEMENTATION OF THE LOGIC OF THE STRATEGY
         ##
         ## TODO: ADD A SINGLE EXAMPLE
+        self.logger().info(f'Tick @ <{timestamp}>')
         self._last_timestamp = timestamp
 
     def start(self, clock: Clock, timestamp: float):

@@ -18,6 +18,7 @@ def start(self):
 {% endfor %}
             hb_app_notification=True
         )
+        self.logger().info('Initialized strategy: SimpleStrategy')
     except Exception as e:
         self._notify(str(e))
         self.logger().error("Error during initialization!!", exc_info=True)
