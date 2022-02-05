@@ -71,12 +71,13 @@ framework.
 
 The grammar definition is located in the [grammar/strategy.tx](https://github.com/klpanagi/hbot-strategy-dsl/blob/main/hbot_strategy_dsl/grammar/strategy.tx) directory of this package.
 
-Models are defined within a simple file with the `.strategy` extension.
+Models are defined within a simple file with the `.strategy` extension. The
+grammar is json-like, with extra buildins for defining several concepts.
 
 Below is an example of a strategy which connects to 2 markets and has 2
 parameters.
 
-```
+```json
 name: SimpleStrategy
 version: "0.0.1"
 description: "Example of a simple strategy model"
@@ -100,6 +101,9 @@ parameters: [
 ]
 ```
 
+The DSL currenntly provides buildins for defining `Markets`,`Exchanges`, `Pairs`
+and `Params`.
+
 Note that at least one market and one parameter must be defined for the model to
 be considered valid.
 
@@ -115,4 +119,4 @@ hbot generate <PATH_TO_MODEL_FILE>
 
 ## Simple Strategy Example
 
-A simple strategy defined using the DSL is located in the [examples/simple_example](examples/simple_example) directory.
+A simple strategy defined using the DSL is located in the [examples/simple_example](hbot_strategy_dsl/examples/simple_example) directory.
