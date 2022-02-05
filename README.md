@@ -77,7 +77,7 @@ grammar is json-like, with extra buildins for defining several concepts.
 Below is an example of a strategy which connects to 2 markets and has 2
 parameters.
 
-```json
+```
 name: SimpleStrategy
 version: "0.0.1"
 description: "Example of a simple strategy model"
@@ -113,6 +113,19 @@ To generate a new strategy project from an input model, use the `hbot` cli:
 
 ```bash
 hbot generate <PATH_TO_MODEL_FILE>
+```
+
+The generator will create a new directory with all files included.
+
+```
+current_dir
+  - my_strategy_model.strategy
+  - gen/
+    * start.py
+    * my_strategy.py
+    * __init__.py
+    * conf_simple_strategy_config_map.py
+    * conf_simple_strategy_strategy_TEMPLATE.yml
 ```
 
 # Examples
