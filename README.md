@@ -151,6 +151,33 @@ current_dir
     * conf_simple_strategy_strategy_TEMPLATE.yml
 ```
 
+The generated strategy, in current version of the **Hbot DSL**, is dummy and
+does not include any logic.
+Though it prints the timestamp on each tick :metal:
+
+![Generated_Strategy_Running](assets/images/gen_bot_running.png)
+
+## Build the generated strategy
+
+First, the `HUMMINGBOT_REPO_DIR` environmental variable must be set, pointing
+at the hummingbot client repo directory.
+
+```
+export HUMMINGBOT_REPO_DIR=~/Development/hummingbot
+```
+
+Next use the `hbot build` command.
+
+```
+hbot build <GEN_SRC_DIR> <STRATEGY_NAME>
+```
+
+And then recompile hummingbot client:
+
+```
+cd ${HUMMINGBOT_REPO_DIR} && ./compile
+```
+
 # Examples
 
 ## Simple Strategy Example
