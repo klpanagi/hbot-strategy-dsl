@@ -82,7 +82,7 @@ def generate_conf_map_file(strategy, out_dir):
     strategy_name = camelcase_to_snakecase(strategy.name)
     strategy.name_snake = strategy_name
     out_file = path.join(out_dir,
-                         f"conf_{strategy_name}_config_map.py")
+                         f"{strategy_name}_config_map.py")
     with open(path.join(out_file), 'w') as f:
         f.write(CONF_MAP_TPL.render(strategy=strategy))
     chmod(out_file, 509)
