@@ -14,7 +14,7 @@ from hummingbot.client.config.config_validators import (
 )
 
 {{ strategy.name_snake }}_config_map = {
-    "strategy"
+    "strategy":
         ConfigVar(
             key="strategy",
             prompt="",
