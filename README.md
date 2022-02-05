@@ -32,8 +32,7 @@ Initialises the strategy, connectors and market_info objects.
 The main strategy file which users need to care about the most.
 ```
 
-These files use the same information, which are essentially the core
-attributes of a Strategy:
+By digging into these files, we noticed that the same information is used, which is essentially the core attributes of a Strategy:
 
 - Name
 - Description
@@ -44,6 +43,8 @@ By providing this information, the aforementioned files can be auto-generated
 from input models describing the strategies. In this context, the
 `hbot-strategy-dsl` provides means of auto-generating strategies from input
 models.
+
+The set of these files define an `Hbot Strategy Project`!
 
 # Installation
 
@@ -106,6 +107,28 @@ and `Params`.
 
 Note that at least one market and one parameter must be defined for the model to
 be considered valid.
+
+A Market can be defined using the `Market` building, which requires 2 arguments;
+1) The `Exchange` and 2) the `Market Pair`. Currently, the following exchanges
+are supported:
+
+- Binance(API_KEY, API_SECRET)
+- AscentEX(API_KEY, API_SECRET)
+
+The `Pair` buildin has a simple argument; `Pair("<MARKET_PAIR>")`.
+
+To support definition of strategy parameters, the language provides the `Param`
+buildin. The following arguments are supported:
+
+- name (str)
+- type (One of: int|float|str|bool|list|dict)
+- description (str)
+- prompt_msg (str)
+- default (int|float|str|bool|list|dict)
+- keyword (str)
+- dynamic_reconfigure (bool)
+- prompt_on_new (bool)
+
 
 ## Strategy Project Generation
 
