@@ -183,3 +183,10 @@ cd ${HUMMINGBOT_REPO_DIR} && ./compile
 ## Simple Strategy Example
 
 A simple strategy defined using the DSL is located in the [examples/simple_example](hbot_strategy_dsl/examples/simple_example) directory.
+
+
+# TODO
+
+- Market Initialization in generated strategy
+- Parameter Validator Concept in DSL
+- Support parameter validators in code generator
