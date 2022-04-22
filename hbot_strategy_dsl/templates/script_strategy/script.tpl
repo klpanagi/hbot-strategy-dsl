@@ -1,5 +1,13 @@
-import logging
+"""
+<This is a {{ strategy.type }} strategy generated using the hbot-strategy-dsl>
+
+Description: {{ strategy.description }}
+Author: {{ strategy.author }}
+
+"""
+
 import time
+import logging
 from decimal import Decimal
 from statistics import mean
 from typing import List
@@ -12,40 +20,44 @@ from hummingbot.core.rate_oracle.rate_oracle import RateOracle
 from hummingbot.strategy.script_strategy_base import ScriptStrategyBase
 
 
-NaN = float("nan")
-s_decimal_zero = Decimal(0)
-s_decimal_nan = Decimal("NaN")
-lms_logger = None
-
-
 class {{ strategy.name }}(ScriptStrategyBase):
+    """
+    {{ strategy.description }}
+    """
+
 {% for param in strategy.parameters %}
-    {{ param.name }}: {{ param.type }},
+    {{ param.name }}: {{ param.type }} = {{ param.defaultValue }}
 {% endfor %}
 
+    markets =  {
+{% for market in strategy.markets %}
+        '{{ market.connector }}': {{ market.pairs }},
+{% endfor %}
+    }
 
     @property
-    def connector(self) -> ExchangeBase:
-        """
-        The only connector in this strategy, define it here for easy access
-        """
-        return self.connectors[self.connector_name]
+    def logger(self):
+        return self.logger()
 
     def on_tick(self):
         """
-        Runs every tick_size seconds, this is the main operation of the strategy.
+        Runs every tick_size seconds, this is the main operation
+        of the strategy.
         - Create proposal (a list of order candidates)
-        - Check the account balance and adjust the proposal accordingly (lower order amount if needed)
+        - Check the account balance and adjust the proposal accordingly
+          (lower order amount if needed)
         - Lastly, execute the proposal on the exchange
         """
         proposal: List[OrderCandidate] = self.create_proposal()
-        proposal = self.connector.budget_checker.adjust_candidates(proposal, all_or_none=False)
+        proposal = self.connector.budget_checker.adjust_candidates(
+                proposal, all_or_none=False)
         if proposal:
             self.execute_proposal(proposal)
 
     def execute_proposal(self, proposal: List[OrderCandidate]):
         """
-        Places the order candidates on the exchange, if it is not within cool off period and order candidate is valid.
+        Places the order candidates on the exchange, if it is not within cool
+        off period and order candidate is valid.
         """
         if self.last_ordered_ts > time.time() - self.cool_off_interval:
             return
@@ -62,24 +74,32 @@ class {{ strategy.name }}(ScriptStrategyBase):
 
     def create_proposal(self) -> List[OrderCandidate]:
         """
-        Creates and returns a proposal (a list of order candidate), in this strategy the list has 1 element at most.
+        Creates and returns a proposal (a list of order candidate), in this
+        strategy the list has 1 element at most.
         """
         proposal = []
-        # If the current price (the last close) is below the dip, add a new order candidate to the proposal
         order_price = self.connector.get_price(
-                self.trading_pair, False) * Decimal("0.9")
-        usd_conversion_rate = RateOracle.get_instance().rate(
-                self.conversion_pair)
-        amount = (self.buy_usd_amount / usd_conversion_rate) / order_price
+                self.trading_pair, False) * Decimal("1.0")
         proposal.append(
             OrderCandidate(
                 self.trading_pair,
                 False,
                 OrderType.LIMIT,
                 TradeType.BUY,
-                amount,
+                0,
                 order_price
             )
         )
         return proposal
 
+    def did_fill_order(self, event: OrderFilledEvent):
+        """
+        Listens to fill order event to log it and notify the hummingbot
+        application.
+        If you set up Telegram bot, you will get notification there as well.
+        """
+        msg = (f"({event.trading_pair}) {event.trade_type.name} "
+               f"order (price: {event.price}) of {event.amount} "
+               f"{split_hb_trading_pair(event.trading_pair)[0]} is filled.")
+        self.logger.info(msg)
+        self.notify_hb_app_with_timestamp(msg)

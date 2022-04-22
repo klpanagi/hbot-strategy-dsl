@@ -4,20 +4,20 @@ StrategyModel:
     (
       ('name:' name=ID)
       ('version:' version=STRING)
+      ('type:' type=StrategyType)
       ('author:' author=STRING)?
       ('author_email:' authorEmail=STRING)?
       ('description:' description=STRING)?
-      ('type:' base=StrategyType)?
       ('labels:' '[' labels*=STRING[','] ']')?
 
       (
         'markets'
-        markets+=Market
+            markets+=Market
         'end'
       )
       (
         'parameters'
-        parameters*=Parameter
+            parameters*=Parameter
         'end'
       )?
     )# // In any order
@@ -31,7 +31,8 @@ Market:
 ;
 
 
-Connector: Exchange;
+/* Connector: Exchange; */
+Connector: 'binance' | 'kucoin' | 'ascent_ex' | 'gate_io';
 
 
 Exchange: BinanceExchange | AscentExExchange | GateIOExchange;
@@ -50,6 +51,7 @@ GateIOExchange:
 
 PairDefinition:
     STRING
+    /* /\'.*\-.*\'/ */
 ;
 
 Parameter:
@@ -89,7 +91,7 @@ DictionaryMember:
 
 ParameterBehaviorType: "static" | "dynamic";
 
-StrategyType: 'Base' | 'Script' | 'PMM' | 'LM';
+StrategyType: 'StrategyBase' | 'Script' | 'PMM' | 'LM';
 
 // Commenting
 Comment:

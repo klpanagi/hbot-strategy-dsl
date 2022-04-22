@@ -1,16 +1,17 @@
 name: SimpleStrategy
 version: "0.0.1"
 description: "Example of a simple strategy model"
+type: Script
 
 markets
     Market
-        connector: Binance('MY_API_KEY', 'MY_API_SECRET')
+        connector: kucoin
         pairs: ['ADA-USDT']
     end
 
     Market
-        connector: AscentEX('MY_API_KEY', 'MY_API_SECRET')
-        pairs: ['ADA-USDT']
+        connector: binance
+        pairs: ['ADA-USDT', 'BTC-USDT']
     end
 end
 

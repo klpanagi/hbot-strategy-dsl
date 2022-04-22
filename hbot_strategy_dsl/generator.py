@@ -51,8 +51,8 @@ def set_defaults(strategy):
         strategy.author = "Anonymous"
     if strategy.description in (None, ""):
         strategy.description = "TODO"
-    # if strategy.type is None:
-    #     strategy.type
+    for market in strategy.markets:
+        market.pairs = set(market.pairs)
     return strategy
 
 
@@ -133,7 +133,7 @@ def generate_strategy_base(model, out_dir: str = '') -> str:
 # From: ScriptStrategyBase ---------------------------------------->
 
 SCRIPT_STRATEGY_TPL = jinja_env.get_template(
-    'script_strategy/strategy_impl.tpl'
+    'script_strategy/script.tpl'
 )
 
 
@@ -145,17 +145,26 @@ def generate_script_strategy(model, out_dir: str = '') -> str:
 
     strategy = set_defaults(model)
     strategy_name = camelcase_to_snakecase(strategy.name)
+    out_file = path.join(out_dir, f"{strategy_name}.py")
+    with open(path.join(out_file), 'w') as f:
+        f.write(SCRIPT_STRATEGY_TPL.render(strategy=strategy))
+    chmod(out_file, 509)
     return out_dir
 
 # ------------------------------------------------------------------
 
 def generate_from_model(model_fpath: str):
     model = build_model(model_fpath)
-    print(model.strategy)
-    return generate_strategy_base(model)
+    print(model.type)
+    if model.type == 'Script':
+        return generate_script_strategy(model)
+    elif model.type == 'StrategyBase':
+        return generate_strategy_base(model)
+    else:
+        raise ValueError(f'Strategy Type <{model.type}> is not supported')
 
 
-@generator('hummingbot', 'v3')
+@generator('hummingbot', 'v1')
 def code_generator(metamodel, model, output_path, overwrite,
         debug: bool, **custom_args):
     """code_generator.

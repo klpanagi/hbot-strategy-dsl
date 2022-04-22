@@ -4,7 +4,7 @@ from os import path, getenv, mkdir, listdir
 import shutil
 import click
 
-from .generator import code_generator as hbot_generator
+from .generator import generate_from_model as hbot_generator
 from .validator import validate_from_file
 
 
@@ -56,18 +56,6 @@ def build(ctx, strategy_gen_dir: str, strategy_name: str):
             shutil.copyfile(
                 path.join(gen_dir, file), path.join(dest_template_dir, file)
             )
-    # os.system(
-    #     f'conda activate hummingbot && cd {hummingbot_repo_dir} && ./compile'
-    # )
-    # proc = subprocess.Popen(
-    #     [f"conda init zsh && conda activate hummingbot && cd {hummingbot_repo_dir} && ./compile"],
-    #     shell=True,
-    #     stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-    #     stderr=subprocess.PIPE
-    # )
-    # output, err = proc.communicate()
-    # print(output)
-    # print(err)
     print(f'Execute: cd {hummingbot_repo_dir} && conda activate hummingbot && ./compile')
 
 
