@@ -3,9 +3,9 @@ import os
 from os import path, getenv, mkdir, listdir
 import shutil
 import click
-import subprocess
 
-from .generator import generate as hbot_generator
+from .generator import code_generator as hbot_generator
+from .validator import validate_from_file
 
 
 @click.group()
@@ -21,12 +21,14 @@ def generate(ctx, model_path: str):
     model_path = str(model_path)
     hbot_generator(model_path)
 
+
 @cli.command(help='Hummingbot Strategy Project Generator')
 @click.pass_context
 @click.argument('model_path')
 def validate(ctx, model_path: str):
     model_path = str(model_path)
-    # hbot_strategy_model_validator(model_path)
+    validate_from_file(model_path)
+
 
 @cli.command(help='Hummingbot Strategy Project Generator')
 @click.pass_context

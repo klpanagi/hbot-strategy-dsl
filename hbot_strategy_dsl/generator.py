@@ -22,18 +22,14 @@ from .language import build_model
 
 _THIS_DIR = path.abspath(path.dirname(__file__))
 
+SRC_GEN_DIR = path.join(path.realpath(getcwd()), 'gen')
+
 # Initialize template engine.
 jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(path.join(_THIS_DIR, 'templates')),
     trim_blocks=True,
-    lstrip_blocks=True)
-
-CONF_TEMPLATE_TPL = jinja_env.get_template('strategy_conf.tpl')
-CONF_MAP_TPL = jinja_env.get_template('strategy_conf_map.tpl')
-START_TPL = jinja_env.get_template('strategy_start.tpl')
-STRATEGY_TPL = jinja_env.get_template('strategy_impl.tpl')
-
-SRC_GEN_DIR = path.join(path.realpath(getcwd()), 'gen')
+    lstrip_blocks=True
+)
 
 
 def camelcase_to_snakecase(_str: str) -> str:
@@ -53,16 +49,30 @@ def set_defaults(strategy):
     #     p.description = p.description.split('#')[1].strip()
     if strategy.author in (None, ""):
         strategy.author = "Anonymous"
+    if strategy.description in (None, ""):
+        strategy.description = "TODO"
+    # if strategy.type is None:
+    #     strategy.type
     return strategy
 
-def generate_init_file(strategy, out_dir):
+
+# From: StrategyBase ---------------------------------------------->
+
+CONF_TEMPLATE_TPL = jinja_env.get_template('strategy_base/strategy_conf.tpl')
+CONF_MAP_TPL = jinja_env.get_template('strategy_base/strategy_conf_map.tpl')
+START_TPL = jinja_env.get_template('strategy_base/strategy_start.tpl')
+STRATEGY_TPL = jinja_env.get_template('strategy_base/strategy_impl.tpl')
+
+
+def generate_init_file(strategy, out_dir: str):
     out_file = path.join(out_dir, "__init__.py")
     with open(path.join(out_file), 'w') as f:
         f.write(f"# Author: {strategy.author}")
         f.write(f"# Author Email: {strategy.authorEmail}")
     chmod(out_file, 509)
 
-def generate_strategy_file(strategy, out_dir):
+
+def generate_strategy_file(strategy, out_dir: str):
     strategy_name = camelcase_to_snakecase(strategy.name)
     strategy.name_snake = strategy_name
     out_file = path.join(out_dir, f"{strategy_name}.py")
@@ -70,7 +80,8 @@ def generate_strategy_file(strategy, out_dir):
         f.write(STRATEGY_TPL.render(strategy=strategy))
     chmod(out_file, 509)
 
-def generate_start_file(strategy, out_dir):
+
+def generate_start_file(strategy, out_dir: str):
     strategy_name = camelcase_to_snakecase(strategy.name)
     strategy.name_snake = strategy_name
     out_file = path.join(out_dir, "start.py")
@@ -78,7 +89,8 @@ def generate_start_file(strategy, out_dir):
         f.write(START_TPL.render(strategy=strategy))
     chmod(out_file, 509)
 
-def generate_conf_map_file(strategy, out_dir):
+
+def generate_conf_map_file(strategy, out_dir: str):
     strategy_name = camelcase_to_snakecase(strategy.name)
     strategy.name_snake = strategy_name
     out_file = path.join(out_dir,
@@ -87,20 +99,22 @@ def generate_conf_map_file(strategy, out_dir):
         f.write(CONF_MAP_TPL.render(strategy=strategy))
     chmod(out_file, 509)
 
-def generate_conf_tpl_file(strategy, out_dir):
+
+def generate_conf_tpl_file(strategy, out_dir: str):
     strategy_name = camelcase_to_snakecase(strategy.name)
-    out_file = path.join(out_dir,
-                         f"conf_{strategy_name}_strategy_TEMPLATE.yml")
+    out_file = path.join(
+        out_dir,
+        f"conf_{strategy_name}_strategy_TEMPLATE.yml"
+    )
     with open(path.join(out_file), 'w') as f:
         f.write(CONF_TEMPLATE_TPL.render(strategy=strategy))
     chmod(out_file, 509)
 
-def generate_project(model_fpath: str,
-             out_dir: str = None):
+
+def generate_strategy_base(model, out_dir: str = '') -> str:
     # Create output folder
-    if out_dir is None:
+    if out_dir in (None, ''):
         out_dir = SRC_GEN_DIR
-    model = build_model(model_fpath)
     if not path.exists(out_dir):
         mkdir(out_dir)
 
@@ -114,12 +128,44 @@ def generate_project(model_fpath: str,
 
     return out_dir
 
+# ------------------------------------------------------------------
 
-def generate(model_fpath: str):
-    return generate_project(model_fpath)
+# From: ScriptStrategyBase ---------------------------------------->
+
+SCRIPT_STRATEGY_TPL = jinja_env.get_template(
+    'script_strategy/strategy_impl.tpl'
+)
+
+
+def generate_script_strategy(model, out_dir: str = '') -> str:
+    if out_dir in (None, ''):
+        out_dir = SRC_GEN_DIR
+    if not path.exists(out_dir):
+        mkdir(out_dir)
+
+    strategy = set_defaults(model)
+    strategy_name = camelcase_to_snakecase(strategy.name)
+    return out_dir
+
+# ------------------------------------------------------------------
+
+def generate_from_model(model_fpath: str):
+    model = build_model(model_fpath)
+    print(model.strategy)
+    return generate_strategy_base(model)
 
 
 @generator('hummingbot', 'v3')
-def goal_dsl_generate_goalee(metamodel, model, output_path, overwrite, debug, **custom_args):
-    "Generator for generating goalee from goal_dsl descriptions"
-    generate(model._tx_filename)
+def code_generator(metamodel, model, output_path, overwrite,
+        debug: bool, **custom_args):
+    """code_generator.
+
+    Args:
+        metamodel:
+        model:
+        output_path:
+        overwrite:
+        debug (bool): debug
+        custom_args:
+    """
+    generate_from_model(model._tx_filename)

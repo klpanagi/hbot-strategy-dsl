@@ -7,22 +7,34 @@ StrategyModel:
       ('author:' author=STRING)?
       ('author_email:' authorEmail=STRING)?
       ('description:' description=STRING)?
+      ('type:' base=StrategyType)?
+      ('labels:' '[' labels*=STRING[','] ']')?
 
-      ('markets:' '[' markets+=Market[','] ']')
-      ('parameters:' '[' parameters+=Parameter[','] ']')
+      (
+        'markets'
+        markets+=Market
+        'end'
+      )
+      (
+        'parameters'
+        parameters*=Parameter
+        'end'
+      )?
     )# // In any order
-
 ;
 
 Market:
-	'Market(' exchange=Exchange ',' pair=MarketPair ')'
+	'Market'
+        'connector:' connector=Connector
+        'pairs:' '['pairs*=PairDefinition[','] ']'
+    'end'
 ;
 
-MarketPair:
-	'Pair(' pair=STRING ')'
-;
 
-Exchange: BinanceExchange | AscentExExchange;
+Connector: Exchange;
+
+
+Exchange: BinanceExchange | AscentExExchange | GateIOExchange;
 
 BinanceExchange:
      'Binance('  apiKey=STRING ',' apiSecret=STRING ')'
@@ -32,19 +44,27 @@ AscentExExchange:
      'AscentEX('  apiKey=STRING ',' apiSecret=STRING ')'
 ;
 
+GateIOExchange:
+     'GateIO('  apiKey=STRING ',' apiSecret=STRING ')'
+;
+
+PairDefinition:
+    STRING
+;
+
 Parameter:
-    'Param('
+    'Param'
     (
-        ('name=' name=ID) ','
-        ('type=' type=ParameterType) ','
-        ('description=' description=STRING ',')?
-        ('prompt_msg=' promptMessage=STRING ',')?
-        ('default=' defaultValue=ParameterValue ',')?
-        ('keyword=' keyword=STRING ',')?
-        ('dynamic_reconfigure=' dynamicReconfigure=BOOL ',')?
-        ('prompt_on_new=' promptOnNew=BOOL ',')?
+        ('name:' name=ID)
+        ('type:' type=ParameterType)
+        ('description:' description=STRING)?
+        ('prompt_msg:' promptMessage=STRING)?
+        ('default:' defaultValue=ParameterValue)?
+        ('keyword:' keyword=STRING)?
+        ('dynamic_reconfigure:' dynamicReconfigure=BOOL)?
+        ('prompt_on_new:' promptOnNew=BOOL)?
     )# // In any order
-    ')'
+    'end'
 ;
 
 ParameterType:
@@ -68,6 +88,8 @@ DictionaryMember:
 ;
 
 ParameterBehaviorType: "static" | "dynamic";
+
+StrategyType: 'Base' | 'Script' | 'PMM' | 'LM';
 
 // Commenting
 Comment:
