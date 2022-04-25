@@ -6,16 +6,24 @@ type: Script
 markets
     Market
         connector: kucoin
-        pairs: ['ADA-USDT']
+        pairs: ['BTC-USDT']
     end
 
     Market
         connector: binance
-        pairs: ['ADA-USDT', 'BTC-USDT']
+        pairs: ['BTC-USDT', 'ETH-USDT']
     end
 end
 
+
 parameters
+    Param
+        name: order_refresh_time
+        type: float
+        default: 0.1
+        description: "How ofted to refresh orders"
+    end
+
     Param
         name: max_spread
         type: float
@@ -23,6 +31,7 @@ parameters
         description: "The maximum spread value"
         dynamic_reconfigure: true
     end
+
     Param
         name: spread
         type: float

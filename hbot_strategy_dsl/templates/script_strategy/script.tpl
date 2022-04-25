@@ -12,7 +12,6 @@ from decimal import Decimal
 from statistics import mean
 from typing import List
 
-from hummingbot.connector.exchange_base import ExchangeBase
 from hummingbot.connector.utils import split_hb_trading_pair
 from hummingbot.core.data_type.order_candidate import OrderCandidate
 from hummingbot.core.event.events import OrderFilledEvent, OrderType, TradeType
@@ -23,6 +22,9 @@ from hummingbot.strategy.script_strategy_base import ScriptStrategyBase
 class {{ strategy.name }}(ScriptStrategyBase):
     """
     {{ strategy.description }}
+
+    For methods provided by the ScriptStrategyBase class visit:
+        feat/script_strategy/hummingbot/strategy/script_strategy_base.py
     """
 
 {% for param in strategy.parameters %}
