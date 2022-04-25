@@ -78,8 +78,9 @@ class {{ strategy.name }}(ScriptStrategyBase):
         strategy the list has 1 element at most.
         """
         proposal = []
+        # Buy at 90% of current mid price, as an example
         order_price = self.connector.get_price(
-                self.trading_pair, False) * Decimal("1.0")
+                self.trading_pair, False) * Decimal("0.9")
         proposal.append(
             OrderCandidate(
                 self.trading_pair,
